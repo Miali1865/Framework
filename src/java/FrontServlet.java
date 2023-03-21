@@ -1,6 +1,7 @@
 package etu1865.framework.servlet;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -9,71 +10,63 @@ import javax.servlet.http.*;
  * @author mialivola
  */
 
+import etu1865.framework.MethodAnnotation;
 import etu1865.framework.Mapping;
+import util.Util;
+import java.util.List;
+import java.util.ArrayList;
+
 public class FrontServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-
     HashMap<String,Mapping> MappingUrls;
+    protected Util util;
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet Front Servlet</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet Front Servlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+    @Override
+    public void init() throws ServletException {
+        try {
+            
+            this.util = new Util();
+            this.MappingUrls = new HashMap<>();
+            List<Class<?>> allClass = util.getClassesInPackage("model");
+            Mapping mapping;
+            Method[] allMethods;
+            for(Class<?> cl : allClass) {
+                allMethods = cl.getMethods();
+
+                for(Method method : allMethods) {
+                    if(method.isAnnotationPresent(MethodAnnotation.class)) {
+                        mapping = new Mapping();
+                        mapping.setClassName(cl.getSimpleName());
+                        mapping.setMethod(method.getName());
+
+                        MappingUrls.put(method.getAnnotation(MethodAnnotation.class).url(), mapping);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String url = request.getRequestURL().toString();
+
+        PrintWriter out = response.getWriter();
+        out.print("url: "+util.processUrl(url, request.getContextPath()));
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";
