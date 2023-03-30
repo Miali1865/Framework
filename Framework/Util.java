@@ -1,6 +1,14 @@
 package util;
 
 import java.util.List;
+import java.io.File;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Element;
+
 import java.util.ArrayList;
 
 public class Util {
@@ -27,5 +35,25 @@ public class Util {
             }
         }
         return classes;
+    }
+
+
+    public List<String> fichierXML( String fichier ) throws Exception {
+        List<String> listPackage = new ArrayList<>();
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+
+        Document doc = builder.parse(fichier);
+        doc.getDocumentElement().normalize();
+
+        Element packagesElement = (Element) doc.getElementsByTagName("classes").item(0);
+        NodeList packageNodes = packagesElement.getElementsByTagName("package");
+
+        for(int i = 0; i < packageNodes.getLength(); i++) {
+            Element packageElement = (Element) packageNodes.item(i);
+            String packageName = packageElement.getTextContent();
+            listPackage.add(packageName);
+        }
+        return listPackage;
     }
 }
