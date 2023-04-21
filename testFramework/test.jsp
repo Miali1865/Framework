@@ -8,5 +8,6 @@
 </head>
 <body>
     <p>Bonjour, voici votre view</p>
+    <p>Votre data est : <% out.println(request.getAttribute("name"));%></p>
 </body>
 </html>
