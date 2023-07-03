@@ -1,0 +1,16 @@
+cd "C:\Program Files\Apache Software Foundation\Tomcat 9.0\webapps\Framework\Framework"
+jar cvf framework.jar *
+copy "./framework.jar" "C:\Program Files\Apache Software Foundation\Tomcat 9.0\webapps\Framework\testFramework\WEB-INF\lib"
+cd "C:\Program Files\Apache Software Foundation\Tomcat 9.0\webapps\Framework\"
+rm "temp"
+mkdir "temp"
+cd "temp"
+mkdir "WEB-INF"
+cd "WEB-INF"
+mkdir "lib"
+copy "C:\Program Files\Apache Software Foundation\Tomcat 9.0\webapps\Framework\testFramework\WEB-INF\lib" "C:\Program Files\Apache Software Foundation\Tomcat 9.0\webapps\Framework\temp\WEB-INF\lib"
+copy "C:\Program Files\Apache Software Foundation\Tomcat 9.0\webapps\Framework\testFramework\WEB-INF\*.xml" "C:\Program Files\Apache Software Foundation\Tomcat 9.0\webapps\Framework\temp\WEB-INF"
+copy "C:\Program Files\Apache Software Foundation\Tomcat 9.0\webapps\Framework\testFramework\*.jsp" "C:\Program Files\Apache Software Foundation\Tomcat 9.0\webapps\Framework\temp"
+cd "C:\Program Files\Apache Software Foundation\Tomcat 9.0\webapps\Framework\temp"
+jar cvf "testFramework.war" *
+copy "testFramework.war" "C:\Program Files\Apache Software Foundation\Tomcat 9.0\webapps"

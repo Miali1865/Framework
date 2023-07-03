@@ -6,7 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface MethodAnnotation {
-    String url();
+@Target(ElementType.TYPE)
+
+public @interface Scope {
+    String value() default "NON_SINGLETON";
 }
