@@ -5,8 +5,9 @@ import etu1865.framework.ModelView;
 import java.util.HashMap;
 
 public class Emp {
-    int id;
-    String name;
+
+    public int id;
+    public String name ;
 
 
     public int getId() {
@@ -25,14 +26,16 @@ public class Emp {
         this.name = name;
     }
 
-    @MethodAnnotation(url = "/EmpAll")
+    @MethodAnnotation( url = "/EmpAll")
     public ModelView name() {
 
         HashMap<String,Object> data = new HashMap<String,Object>();
-        data.put("name","Mialivola");
+        data.put("data","Mialivola");
         return new ModelView("test.jsp",data);
     }
 
-
+    public String save() {
+        return(this.getName());
+    }
 
 }

@@ -1,3 +1,4 @@
+<%@ page import="model.Emp" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +9,6 @@
 </head>
 <body>
     <p>Bonjour, voici votre view</p>
-    <p>Votre data est : <% out.println(request.getAttribute("name"));%></p>
+    <p>Votre data est : <% out.println(request.getAttribute("data"));%></p>
 </body>
 </html>

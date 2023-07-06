@@ -2,6 +2,9 @@ package util;
 
 import java.util.List;
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
@@ -24,22 +27,6 @@ public class Util {
         int manisaslash = nomurl.lastIndexOf("/");
         return nomurl.substring(manisaslash);
     }
-
-    // public List<Class<?>> getClassesInPackage(String packageName) throws Exception {
-    //     List<Class<?>> classes = new ArrayList<>();
-    //     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-    //     String path = packageName.replace('.', '/');
-    //     for (java.net.URL resource : java.util.Collections.list(classLoader.getResources(path))) {
-    //         for (String file : new java.io.File(resource.toURI()).list()) {
-    //             if (file.endsWith(".class")) {
-    //                 String className = packageName + '.' + file.substring(0, file.length() - 6);
-    //                 Class<?> clazz = Class.forName(className);
-    //                 classes.add(clazz);
-    //             }
-    //         }
-    //     }
-    //     return classes;
-    // }
 
     public List<Class<?>> getClassesInPackage(String packageName) throws Exception {
         List<Class<?>> classes = new ArrayList<>();
@@ -96,4 +83,24 @@ public class Util {
         }
         return listPackage;
     }
+
+    public Method getMethodByClassName(String classe,String method) throws NoSuchMethodError {
+        Method methods = null;
+        try {
+            Class<?> clazz = Class.forName(classe);
+            Object o = clazz.getDeclaredConstructor().newInstance();
+            Method[] allMethods = o.getClass().getDeclaredMethods();
+            for( Method m : allMethods ) {
+                if(m.getName().equals(method)) {
+                    methods = m;
+                    break;
+                }
+            } 
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        return methods;
+    }
+
+
 }
