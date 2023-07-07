@@ -13,19 +13,6 @@
         <input type="text" name="profile" placeholder="Votre profil">
         <input type="submit" value="Valider">
     </form>
-
-    <h5>Sprint 7 avec verification SINGLETON</h5>
-    <form action="http://localhost:8081/testFramework/EmpAll" method="post">
-        <input type="text" name="Name" placeholder="Votre nom">
-        <input type="submit" value="Valider">
-    </form>
-
-    <h5>Sprint 8</h5>
-    <form action="http://localhost:8081/testFramework/sprint8" method="post">
-        <input type="text" name="profile" placeholder="Votre profil">
-        <input type="text" name="name" placeholder="Votre nom">
-        <input type="submit" value="Valider">
-    </form>
     
 </body>
 </html>
