@@ -1,3 +1,4 @@
+<%@ page import="javax.servlet.http.HttpSession" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,15 +9,23 @@
 </head>
 <body>
 
-    <h5>Sprint 7 avec verification SINGLETON</h5>
+    <%
+        try {
+            String testlist = (String) session.getAttribute("isConnected");
+            out.println("Profil connecte "+testlist);
+        } catch (Exception e) {
+            out.println(e.getMessage());
+        }
+    %>
+
+    <h5>Sprint 7 avec v&eacute;rification SINGLETON</h5>
     <form action="http://localhost:8081/testFramework/EmpAll" method="post">
         <input type="text" name="Name" placeholder="Votre nom">
         <input type="submit" value="Valider">
     </form>
 
-    <h5>Sprint 8</h5>
+    <h5>Sprint 8 avec v&eacute;rification profil</h5>
     <form action="http://localhost:8081/testFramework/sprint8" method="post">
-        <input type="text" name="profile" placeholder="Votre profil">
         <input type="text" name="name" placeholder="Votre nom">
         <input type="submit" value="Valider">
     </form>

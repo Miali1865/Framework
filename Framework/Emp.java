@@ -13,23 +13,23 @@ public class Emp {
     private static Emp instance;
     public int id;
     public String name ;
-    private static int compteurInstances = 0;
+    // private static int compteurInstances = 0;
 
-    public Emp() {
-        // Incrémenter le compteur d'instances à chaque création d'objet
-        compteurInstances++;
-    }
+    // public Emp() {
+    //     // Incrémenter le compteur d'instances à chaque création d'objet
+    //     compteurInstances++;
+    // }
 
-    public static int getCompteurInstances() {
-        return compteurInstances;
-    }
+    // public static int getCompteurInstances() {
+    //     return compteurInstances;
+    // }
 
-    public static Emp getInstance() {
-        if (instance == null) {
-            instance = new Emp();
-        }
-        return instance;
-    }
+    // public static Emp getInstance() {
+    //     if (instance == null) {
+    //         instance = new Emp();
+    //     }
+    //     return instance;
+    // }
 
     public int getId() {
         return id;
@@ -53,7 +53,8 @@ public class Emp {
 
         HashMap<String,Object> data = new HashMap<String,Object>();
         data.put("data","Mialivola");
-        return new ModelView("test.jsp",data);
+        // return new ModelView("test.jsp",data);
+        return new ModelView();
     }
 
     @MethodAnnotation( url = "/sprint8" , paramName = "name")
@@ -66,7 +67,6 @@ public class Emp {
         return new ModelView("test.jsp",data);
     }
 
-    @AuthProfile( profile = "admin,mialivola" )
     @MethodAnnotation( url = "/verifProfil")
     public ModelView verifProfil() {
 
