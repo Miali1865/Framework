@@ -29,5 +29,11 @@
         <input type="text" name="name" placeholder="Votre nom">
         <input type="submit" value="Valider">
     </form>
+
+    <h5>Upload File</h5>
+    <form action="http://localhost:8081/testFramework/uploadFile" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" placeholder="Votre nom">
+        <input type="submit" value="Valider">
+    </form>
 </body>
 </html>

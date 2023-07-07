@@ -2,6 +2,7 @@ package util;
 
 import java.util.List;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -10,6 +11,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import etu1865.framework.FileUpload;
 import org.w3c.dom.Element;
 import java.util.ArrayList;
 import java.net.URLClassLoader;
@@ -18,6 +20,8 @@ import java.net.URL;
 import java.util.jar.JarFile;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
+import javax.servlet.http.*;
+import javax.servlet.ServletException;
 
 
 
@@ -64,7 +68,6 @@ public class Util {
     }
     
 
-
     public List<String> fichierXML( String fichier ) throws Exception {
         List<String> listPackage = new ArrayList<>();
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -103,4 +106,11 @@ public class Util {
     }
 
 
+    public static FileUpload getUploadFile(HttpServletRequest request,String file) throws ServletException,IOException {
+        Part filePart = request.getPart(file);
+        FileUpload resultat = new FileUpload();
+        resultat.setName(filePart.getSubmittedFileName());
+        resultat.setFile(filePart.getInputStream().readAllBytes());
+        return resultat;
+    }
 }
