@@ -32,7 +32,7 @@
 
     <h5>Upload File</h5>
     <form action="http://localhost:8081/testFramework/uploadFile" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" placeholder="Votre nom">
+        <input type="file" name="File">
         <input type="submit" value="Valider">
     </form>
 </body>

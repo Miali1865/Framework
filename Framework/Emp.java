@@ -14,11 +14,11 @@ public class Emp {
     public int id;
     public String name ;
 
-    public FileUpload getFileUpload() {
+    public FileUpload getFile() {
         return fileUpload;
     }
 
-    public void setFileUpload(FileUpload fileUpload) {
+    public void setFile(FileUpload fileUpload) {
         this.fileUpload = fileUpload;
     }
 
@@ -40,7 +40,6 @@ public class Emp {
         this.name = name;
     }
 
-    @AuthProfile( profile = "admin,mialivola" )
     @MethodAnnotation( url = "/EmpAll")
     public ModelView name() {
 
@@ -51,6 +50,7 @@ public class Emp {
 
     }
 
+    @AuthProfile( profile = "admin,mialivola" )
     @MethodAnnotation( url = "/sprint8" , paramName = "name")
     public ModelView getSprint(String name) {
 
@@ -73,8 +73,8 @@ public class Emp {
     public ModelView uploadFile( FileUpload fileUpload ) {
 
         HashMap<String,Object> data = new HashMap<String,Object>();
-        this.setFileUpload(fileUpload);
-        data.put("data",this.getFileUpload());
+        this.setFile(fileUpload);
+        data.put("data",this.getFile());
         return new ModelView("file.jsp",data);
     }
 

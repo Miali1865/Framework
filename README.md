@@ -51,6 +51,17 @@ Exemple :
 
 Dans cet exemple , "model" et "etu1865" sont les packages nécessaires
 
+* Afin d'utliser plusieurs fonctionnalités veuillez utiliser le profil : "admin" ou "mialivola"
+
+* Lors de la connexion , on enregistre les profils dans une session
+
+* Veuillez configurer tous vos attributs paraillement
+
+* Si vous souhaitez annoter votre classe en Singleton , rajouter @Scope( "SINGLETON" ) comme la classe Emp
+
+    @Scope( "SINGLETON" )
+    public class Emp {
+
 * Configurer votre fichier .jsp configurer l'action de votre formulaire comme suite `"http://localhost:8080/testFramework/EmpAll"`
 
 Exemple : 
