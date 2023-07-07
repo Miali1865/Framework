@@ -2,6 +2,7 @@ package model;
 
 import etu1865.framework.MethodAnnotation;
 import etu1865.framework.AuthProfile;
+import etu1865.framework.FileUpload;
 import etu1865.framework.ModelView;
 import etu1865.framework.Scope;
 
@@ -10,26 +11,18 @@ import java.util.HashMap;
 @Scope( "SINGLETON" )
 public class Emp {
 
-    private static Emp instance;
     public int id;
     public String name ;
-    // private static int compteurInstances = 0;
 
-    // public Emp() {
-    //     // Incrémenter le compteur d'instances à chaque création d'objet
-    //     compteurInstances++;
-    // }
+    public FileUpload getFile() {
+        return fileUpload;
+    }
 
-    // public static int getCompteurInstances() {
-    //     return compteurInstances;
-    // }
+    public void setFile(FileUpload fileUpload) {
+        this.fileUpload = fileUpload;
+    }
 
-    // public static Emp getInstance() {
-    //     if (instance == null) {
-    //         instance = new Emp();
-    //     }
-    //     return instance;
-    // }
+    private FileUpload fileUpload;
 
     public int getId() {
         return id;
@@ -47,16 +40,17 @@ public class Emp {
         this.name = name;
     }
 
-    @AuthProfile( profile = "admin,mialivola" )
     @MethodAnnotation( url = "/EmpAll")
     public ModelView name() {
 
         HashMap<String,Object> data = new HashMap<String,Object>();
         data.put("data","Mialivola");
-        // return new ModelView("test.jsp",data);
-        return new ModelView();
+        return new ModelView("test.jsp",data);
+        // return new ModelView();
+
     }
 
+    @AuthProfile( profile = "admin,mialivola" )
     @MethodAnnotation( url = "/sprint8" , paramName = "name")
     public ModelView getSprint(String name) {
 
@@ -73,6 +67,15 @@ public class Emp {
         HashMap<String,Object> data = new HashMap<String,Object>();
         data.put("data","Mialivola");
         return new ModelView("contenu.jsp",data);
+    }
+
+    @MethodAnnotation( url = "/uploadFile", paramName = "File" )
+    public ModelView uploadFile( FileUpload fileUpload ) {
+
+        HashMap<String,Object> data = new HashMap<String,Object>();
+        this.setFile(fileUpload);
+        data.put("data",this.getFile());
+        return new ModelView("file.jsp",data);
     }
 
     public String save() {

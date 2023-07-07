@@ -9,12 +9,15 @@ import java.util.HashMap;
 import javax.management.MXBean;
 import javax.servlet.*;
 import javax.servlet.http.*;
+import javax.swing.text.View;
+
 /**
  *
  * @author mialivola
  */
 import etu1865.framework.MethodAnnotation;
 import etu1865.framework.AuthProfile;
+import etu1865.framework.FileUpload;
 import etu1865.framework.Scope;
 import etu1865.framework.Mapping;
 import etu1865.framework.ModelView;
@@ -65,8 +68,8 @@ public class FrontServlet extends HttpServlet {
                             
                             for(String key : MappingUrls.keySet()) {
                                 Mapping a = MappingUrls.get(key);
-                                out.println("Name classe = "+a.getClassName()+" et name methode = "+a.getMethod());
-                                out.println("Key "+key);
+                                // out.println("Name classe = "+a.getClassName()+" et name methode = "+a.getMethod());
+                                // out.println("Key "+key);
                             }
                             
                         }
@@ -107,146 +110,50 @@ public class FrontServlet extends HttpServlet {
 
         try {
             Mapping mapping = MappingUrls.get(nomurl);
- 
             // Sprint 11
             HttpSession session = request.getSession();
-
             String listProfil = (String) session.getAttribute("isConnected");
             if (listProfil == null) {
                 listProfil = profileConnecte;
-                out.println("Manambotra session vaovao ndray izy");
+                // out.println("Manambotra session vaovao ndray izy");
             } else {
-                out.println("Le taloha no nalaina");
+                // out.println("Le taloha no nalaina");
             }
-            
             session.setAttribute("isConnected", listProfil);
-            
             String testlist = (String) session.getAttribute("isConnected");
             out.println(testlist);
             out.println("Profil connecté : " + testlist);
             
-            
-            boolean isConnectedFind = false;
 
             if( mapping == null ) {
                 out.println("Not Found");
             } 
               
-            
-            out.println("Ito zao ilay mapping : "+mapping);
-            Class<?> classe = Class.forName(mapping.getClassName());
-            out.println(classe.getSimpleName());
-            Object o = classe.getDeclaredConstructor().newInstance();
 
-            // Sprint 8
+            // out.println("Ito zao ilay mapping : "+mapping);
+            Class<?> classe = Class.forName(mapping.getClassName());
+            Object o = classe.getDeclaredConstructor().newInstance();
+            boolean isConnectedFind = false;
+
+            // Vérification si le profil peux se connecter Sprint 10
             String methodSprint8 = mapping.getMethod();
             String stringClasse = mapping.getClassName();
             Method methods = util.getMethodByClassName(stringClasse, methodSprint8);
 
-            // Sprint 11
+
+            // // Sprint 11
             if(methods.isAnnotationPresent(AuthProfile.class)) {
                 AuthProfile autorisationAcces = methods.getAnnotation(AuthProfile.class);
                 String getProfile = autorisationAcces.profile();
                 String[] profilAcces = getProfile.split(",");
                 for(int i = 0; i < profilAcces.length; i++) {
-                    out.println("Reto avy zao ilay profil "+profilAcces[i]);
                     if(profilAcces[i].equalsIgnoreCase(testlist)) {
                         isConnectedFind = true;
                     }
                 } 
             }
-
-
-            if( isConnectedFind )  {
-                out.println("Afaka miconnecte ito olona itoo");
-                ModelView mview = (ModelView) o.getClass().getMethod(mapping.getMethod()).invoke(o);
-                Enumeration<String> enume = request.getParameterNames();
-                out.println("Mba togna eto veee 1");
-                // Sprint 7
-                while (enume.hasMoreElements()) {
-                    String n = enume.nextElement();
-                    Field[] fields = o.getClass().getDeclaredFields();
-                    Field field = fields[1];
-                    out.println("Mba togna eto veee 1");
-
-                    if(field == null){
-                        continue;
-                    }
-                    out.println("Mba togna eto veee 2");
-
-                    Object value = null;
-                    out.println("Tongaaaa etoooo veeeee");
-                    Class<?> parameterType = o.getClass().getDeclaredMethod("set" + n , field.getType()).getParameterTypes()[0];
-                    out.println("Tonga 3");
-
-                    if (parameterType == String.class) {
-                        value = request.getParameter(n);
-                    } else if (parameterType == int.class || parameterType == Integer.class) {
-                        value = Integer.parseInt(request.getParameter(n));
-                    } else if (parameterType == double.class || parameterType == Double.class) {
-                        value = Double.parseDouble(request.getParameter(n));
-                    } else if (parameterType == boolean.class || parameterType == Boolean.class) {
-                        value = Boolean.parseBoolean(request.getParameter(n));
-                    } else {
-                        // Autres types de données peuvent être gérés de manière similaire
-                        throw new IllegalArgumentException("Type de paramètre non géré : " + parameterType.getName());
-                    }
-                    out.println("Tonga 4");
-
-                    o.getClass().getDeclaredMethod("set" + n, parameterType).invoke(o, value);
-                }
-
-                out.println("Nom vaovao : "+o.getClass().getDeclaredMethod("save").invoke(o));
-                out.println("View : "+mview.getView());
-
-
-                // Sprint 10
-                HashMap<String, Object> data = new HashMap<String, Object>();
-                data = mview.getData();
-
-                if (data == null) {
-                    out.print("Votre data est null");
-                }
-
-
-                if (o.getClass().isAnnotationPresent(Scope.class)) {
-                    Scope isScope = o.getClass().getAnnotation(Scope.class);
-                    out.println("ito ilay classe "+o.getClass().getSimpleName());
-                    String ifSingleton = isScope.value();
-                    out.println("Valeur de scope = " + ifSingleton);
-
-                    if (ifSingleton.equalsIgnoreCase("SINGLETON")) {
-                        out.println("Ceci est un singleton");
-                        // Ne rien faire, la première information est déjà récupérée et stockée
-                        if (data.containsKey("data")) {
-                            Object firstData = data.get("data");
-                            request.setAttribute("data", firstData);
-                        } else {
-                            // La première fois qu'on récupère des données, les stocker dans le HashMap
-                            data.put("data", o.getClass().getDeclaredMethod("save").invoke(o));
-                        }
-                    } else {
-                        // Créer une nouvelle donnée de HashMap
-                        for (String key : data.keySet()) {
-                            //Object dataObject = data.get(key);
-                            request.setAttribute(key, o.getClass().getDeclaredMethod("save").invoke(o));
-                            out.println("la cle est = "+key);
-                            out.println("le taloha = "+request.getAttribute(key));
-                            out.println("le taloha = "+request.getAttribute("data"));
-                        }
-                    }
-                }
-
-
-                out.println(request.getAttribute("data"));
-                RequestDispatcher dispatch = request.getRequestDispatcher(mview.getView());
-                dispatch.forward(request, response);
-            } else  {
-                out.println("Permission denied");
-            }
-
-
-            // Sprint 8
+            
+            // // Sprint 8
             if(methods.isAnnotationPresent(MethodAnnotation.class)) {
                 MethodAnnotation annotation = methods.getAnnotation(MethodAnnotation.class);
                 String paramName = annotation.paramName();
@@ -254,11 +161,13 @@ public class FrontServlet extends HttpServlet {
                 Class<?>[] paramTypes = methods.getParameterTypes();
                 Object[] objectTypes = new Object[paramTypes.length];
 
+                
+
                 if( getGroupParamName.length == paramTypes.length ) {
 
                     for(int i = 0; i < getGroupParamName.length; i++) {
                         String paramNom = getGroupParamName[i].trim();
-                        out.println("Ty mintsy no olana "+paramNom);
+                        // out.println("Ty mintsy no olana "+paramNom);
                         Class<?> paramType = paramTypes[i];
                         String modifiedParamNom = paramNom.substring(0, 1).toUpperCase() + paramNom.substring(1);
 
@@ -272,29 +181,116 @@ public class FrontServlet extends HttpServlet {
                             objectTypes[i] = Double.parseDouble(request.getParameter(paramNom));
                         } else if (paramType == boolean.class || paramType == Boolean.class) {
                             objectTypes[i] = Boolean.parseBoolean(request.getParameter(paramNom));
+                        } else if (paramType == FileUpload.class ) {
+                            objectTypes[i] = util.getUploadFile(request, paramNom);
                         } else {
                             // Autres types de données peuvent être gérés de manière similaire
                             throw new IllegalArgumentException("Type de paramètre non géré : " + paramType.getName());
                         }
                         o.getClass().getDeclaredMethod("set" + modifiedParamNom, paramType).invoke(o, objectTypes[i]);
                     }
-                }
-                ModelView mviewSpring8 = (ModelView) o.getClass().getMethod(mapping.getMethod(), paramTypes ).invoke(o,objectTypes);
-                HashMap<String, Object> dataSpring8 = new HashMap<String, Object>();
-                dataSpring8 = mviewSpring8.getData();
-                if(dataSpring8 == null) {
-                    out.println("data null");
-                }
-                if(dataSpring8 != null) {
-                    for(String cle : dataSpring8.keySet()) {
-                        Object dataoObject = dataSpring8.get(cle);
-                        request.setAttribute(cle,dataoObject);
+                } else {
+                    // ModelView sprint 11
+                    Enumeration<String> enume = request.getParameterNames();
+                    // Sprint 7
+                    while (enume.hasMoreElements()) {
+
+                        String n = enume.nextElement();
+                        Field[] fields = o.getClass().getDeclaredFields();
+                        Field field = fields[1];
+
+                        if(field == null){
+                            continue;
+                        }
+                        if( n.equalsIgnoreCase("profile")) {
+                            out.println("Tsy mety");
+                        } else {
+                            Object value = null;
+                            Class<?> parameterType = o.getClass().getDeclaredMethod("set" + n , field.getType()).getParameterTypes()[0];
+                            out.println("Ito no tena tiako jerena "+parameterType);
+
+                            if (parameterType == String.class) {
+                                value = request.getParameter(n);
+                            } else if (parameterType == int.class || parameterType == Integer.class) {
+                                value = Integer.parseInt(request.getParameter(n));
+                            } else if (parameterType == double.class || parameterType == Double.class) {
+                                value = Double.parseDouble(request.getParameter(n));
+                            } else if (parameterType == boolean.class || parameterType == Boolean.class) {
+                                value = Boolean.parseBoolean(request.getParameter(n));
+                            } else {
+                                // Autres types de données peuvent être gérés de manière similaire
+                                throw new IllegalArgumentException("Type de paramètre non géré : " + parameterType.getName());
+                            }
+                            o.getClass().getDeclaredMethod("set" + n, parameterType).invoke(o, value);
+                        }
+                        // ModelView sprint 7
+                        ModelView mview = (ModelView) o.getClass().getMethod(mapping.getMethod()).invoke(o);
+                        out.println("Nom vaovao : "+o.getClass().getDeclaredMethod("save").invoke(o));
+                        out.println("View : "+mview.getView());
+
+                        HashMap<String,Object> data = new HashMap<String,Object>();
+                        data = mview.getData();
+                        // out.print(data);
+
+                        if(data == null) {
+                            out.print("Votre data est null");
+                        }
+
+                        data.put("data", o.getClass().getDeclaredMethod("save").invoke(o));
+
+                        if (o.getClass().isAnnotationPresent(Scope.class)) {
+                            Scope isScope = o.getClass().getAnnotation(Scope.class);
+                            out.println("ito ilay classe " + o.getClass().getSimpleName());
+                            String ifSingleton = isScope.value();
+                            out.println("Valeur de scope = " + ifSingleton);
+                        
+                            if (ifSingleton.equalsIgnoreCase("SINGLETON")) {
+                                // Ceci est un singleton
+                                if (!data.containsKey("data")) {
+                                    // La première fois qu'on récupère des données, les stocker dans le HashMap
+                                    Object newData = o.getClass().getDeclaredMethod("save").invoke(o);
+                                    data.put("data", newData);
+                                }
+                                Object firstData = data.get("data");
+                                request.setAttribute("data", firstData);
+                            } else {
+                                // Créer une nouvelle donnée dans le HashMap
+                                String key = o.getClass().getSimpleName();
+                                if (!data.containsKey(key)) {
+                                    Object newData = o.getClass().getDeclaredMethod("save").invoke(o);
+                                    data.put(key, newData);
+                                }
+                                Object dataObject = data.get(key);
+                                request.setAttribute(key, dataObject);
+                            }
+                        }                                               
+                        out.println(request.getAttribute("data"));
+                        RequestDispatcher dispatcher = request.getRequestDispatcher(mview.getView());
+                        dispatcher.forward(request, response);
                     }
-                    RequestDispatcher dispatcher = request.getRequestDispatcher(mviewSpring8.getView());
-                    dispatcher.forward(request, response);
+
+                }
+                if( isConnectedFind ) {
+                    ModelView mviewSpring8 = (ModelView) o.getClass().getMethod(mapping.getMethod(), paramTypes ).invoke(o,objectTypes);
+                    HashMap<String, Object> dataSpring8 = new HashMap<String, Object>();
+                    dataSpring8 = mviewSpring8.getData();
+                    if(dataSpring8 == null) {
+                        out.println("data null");
+                    }
+                    if(dataSpring8 != null) {
+                        for(String cle : dataSpring8.keySet()) {
+                            Object dataoObject = dataSpring8.get(cle);
+                            request.setAttribute(cle,dataoObject);
+                        }
+                        RequestDispatcher dispatch = request.getRequestDispatcher(mviewSpring8.getView());
+                        dispatch.forward(request, response);
+                    }
+                } else {
+                    out.println("Permission denied");
                 }
 
-            }
+            } 
+
 
         } catch (Exception e) {
             try {
